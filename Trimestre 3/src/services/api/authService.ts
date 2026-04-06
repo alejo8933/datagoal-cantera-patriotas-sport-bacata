@@ -23,6 +23,7 @@ export const authService = {
       password: fields.password,
       options: {
         data: {
+          rol:              fields.rol,
           nombre:           fields.nombre,
           apellido:         fields.apellido,
           telefono:         fields.telefono,

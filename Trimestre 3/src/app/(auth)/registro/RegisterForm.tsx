@@ -13,6 +13,7 @@ export default function RegisterForm() {
   const [aceptaTerminos, setAceptaTerminos] = useState(false)
 
   const [form, setForm] = useState({
+    rol: 'jugador' as 'jugador' | 'entrenador' | 'admin',
     nombre: '', apellido: '', email: '', telefono: '',
     fechaNacimiento: '', posicion: '', categoria: '',
     password: '', confirm: '',
@@ -40,6 +41,7 @@ export default function RegisterForm() {
     }
 
     const ok = await register({
+      rol:             form.rol,
       email:           form.email,
       password:        form.password,
       nombre:          form.nombre,
@@ -97,6 +99,27 @@ export default function RegisterForm() {
           </div>
         )}
 
+        {/* ── Selección de Rol ── */}
+        <div className="flex flex-col gap-3">
+          <h2 className="text-base font-semibold text-gray-900 border-b border-gray-200 pb-1">
+            Tipo de Cuenta
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            <label className={`flex-1 min-w-[100px] text-xs text-center py-2 rounded-lg border-2 cursor-pointer transition ${form.rol === 'jugador' ? 'border-red-600 bg-red-50 text-red-700 font-bold' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+              <input type="radio" name="rol" value="jugador" checked={form.rol === 'jugador'} onChange={handleChange} className="hidden" />
+              Jugador
+            </label>
+            <label className={`flex-1 min-w-[100px] text-xs text-center py-2 rounded-lg border-2 cursor-pointer transition ${form.rol === 'entrenador' ? 'border-red-600 bg-red-50 text-red-700 font-bold' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+              <input type="radio" name="rol" value="entrenador" checked={form.rol === 'entrenador'} onChange={handleChange} className="hidden" />
+              Entrenador
+            </label>
+            <label className={`flex-1 min-w-[100px] text-xs text-center py-2 rounded-lg border-2 cursor-pointer transition ${form.rol === 'admin' ? 'border-red-600 bg-red-50 text-red-700 font-bold' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+              <input type="radio" name="rol" value="admin" checked={form.rol === 'admin'} onChange={handleChange} className="hidden" />
+              Administrador
+            </label>
+          </div>
+        </div>
+
         {/* ── Información Personal ── */}
         <div className="flex flex-col gap-3">
           <h2 className="text-base font-semibold text-gray-900 border-b border-gray-200 pb-1">
@@ -152,29 +175,33 @@ export default function RegisterForm() {
         </div>
 
         {/* ── Información Futbolística ── */}
-        <div className="flex flex-col gap-3">
-          <h2 className="text-base font-semibold text-gray-900 border-b border-gray-200 pb-1">
-            Información Futbolística
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Posición</label>
-              <select name="posicion" value={form.posicion} onChange={handleChange}
-                required className={selectClass}>
-                <option value="">Selecciona posición</option>
-                {POSICIONES.map(p => <option key={p} value={p}>{p}</option>)}
-              </select>
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Categoría</label>
-              <select name="categoria" value={form.categoria} onChange={handleChange}
-                required className={selectClass}>
-                <option value="">Selecciona categoría</option>
-                {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+        {form.rol !== 'admin' && (
+          <div className="flex flex-col gap-3">
+            <h2 className="text-base font-semibold text-gray-900 border-b border-gray-200 pb-1">
+              Información Deportiva
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {form.rol === 'jugador' && (
+                <div className="flex flex-col gap-1">
+                  <label className="text-sm font-medium text-gray-700">Posición</label>
+                  <select name="posicion" value={form.posicion} onChange={handleChange}
+                    required={form.rol === 'jugador'} className={selectClass}>
+                    <option value="">Selecciona posición</option>
+                    {POSICIONES.map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+              )}
+              <div className={`flex flex-col gap-1 ${form.rol === 'entrenador' ? 'col-span-2' : ''}`}>
+                <label className="text-sm font-medium text-gray-700">Categoría</label>
+                <select name="categoria" value={form.categoria} onChange={handleChange}
+                  required className={selectClass}>
+                  <option value="">Selecciona categoría</option>
+                  {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* ── Seguridad ── */}
         <div className="flex flex-col gap-3">

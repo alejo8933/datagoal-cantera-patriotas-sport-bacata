@@ -13,16 +13,17 @@ export const LoginSchema = z.object({
 })
 
 export const RegisterSchema = z.object({
+  rol:             z.enum(['admin', 'entrenador', 'jugador']),
   email:           z.string().email(),
   password:        z.string().min(6),
   nombre:          z.string().min(1).max(100),
   apellido:        z.string().min(1).max(100),
   telefono:        z.string().min(7),
   fechaNacimiento: z.string(),
-  posicion:        z.string().min(1),
-  categoria:       z.string().min(1),
+  posicion:        z.string().optional(),
+  categoria:       z.string().optional(),
 })
 
 export type User     = z.infer<typeof UserSchema>
 export type Login    = z.infer<typeof LoginSchema>
-export type Register = z.infer<typeof RegisterSchema>
+export type Register = z.infer<typeof RegisterSchema>
