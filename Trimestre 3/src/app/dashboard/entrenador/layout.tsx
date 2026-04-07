@@ -1,29 +1,16 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { ReactNode } from 'react'
+import HeaderEntrenador from '@/components/layout/HeaderEntrenador'
 
-export default async function EntrenadorLayout({ children }: { children: ReactNode }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/login')
-  }
-
-  const { data: perfil } = await supabase
-    .from('perfiles')
-    .select('rol')
-    .eq('id', user.id)
-    .single()
-
-  if (!perfil) {
-    redirect('/login')
-  }
-
-  if (perfil.rol !== 'entrenador') {
-    redirect(`/dashboard/${perfil.rol}`)
-  }
-
-  // Si pasa todo, le mostramos el subárbol
-  return <>{children}</>
+export default function EntrenadorLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <HeaderEntrenador />
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        {children}
+      </main>
+    </div>
+  )
 }

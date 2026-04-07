@@ -61,4 +61,18 @@ export const authService = {
       activo: perfil?.activo ?? true,
     }
   },
-}
+
+  async resetPassword(email: string) {
+    const supabase = createClient()
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/actualizar-password`,
+    })
+    if (error) throw new Error('Error al enviar el correo de recuperación.')
+  },
+
+  async updatePassword(password: string) {
+    const supabase = createClient()
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) throw new Error('Error al actualizar la contraseña.')
+  }
+}

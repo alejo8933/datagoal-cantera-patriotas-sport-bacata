@@ -1,9 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import Header from '@/components/layout/Header'
-import PageTransition from '@/components/layout/PageTransition'
-import Footer from '@/components/layout/Footer'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,11 +25,8 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900`}>
-        <Header />
-        <PageTransition>
-          {children}
-        </PageTransition>
-        <Footer />
+        {/* Sin Header ni Footer aquí ✅ */}
+        {children}
       </body>
     </html>
   )

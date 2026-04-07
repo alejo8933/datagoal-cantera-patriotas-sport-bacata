@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function LoginForm() {
@@ -78,9 +79,9 @@ export default function LoginForm() {
 
       {/* Links */}
       <div className="text-center flex flex-col gap-3 w-full">
-        <a href="#" className="text-red-600 text-sm hover:underline">
+        <Link href="/olvide-password" className="text-red-600 text-sm hover:underline">
           ¿Olvidaste tu contraseña?
-        </a>
+        </Link>
         <p className="text-sm text-gray-500">¿No tienes cuenta?</p>
         <a
           href="/registro"

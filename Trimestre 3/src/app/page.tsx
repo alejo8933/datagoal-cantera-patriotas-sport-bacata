@@ -1,40 +1,42 @@
 import Link from 'next/link'
 import { Users, Trophy, Calendar, TrendingUp } from 'lucide-react'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
 
 const STATS = [
-  { icon: Users,      value: '102+', label: 'Jugadores Activos' },
-  { icon: Trophy,     value: '12',   label: 'Títulos Ganados'   },
-  { icon: Calendar,   value: '16',   label: 'Años de Historia'  },
-  { icon: TrendingUp, value: '85%',  label: 'Victorias Locales' },
+  { icon: Users, value: '102+', label: 'Jugadores Activos' },
+  { icon: Trophy, value: '12', label: 'Títulos Ganados' },
+  { icon: Calendar, value: '16', label: 'Años de Historia' },
+  { icon: TrendingUp, value: '85%', label: 'Victorias Locales' },
 ]
 
 const PARTIDOS = [
-  { rival: 'vs Academia Los Millonarios', torneo: 'Liga de Bogotá · Sub-17',  fecha: '2026-04-05', hora: '15:00' },
-  { rival: 'vs Escuela Santa Fe',         torneo: 'Torneo Maracaná · Sub-15', fecha: '2026-04-12', hora: '18:00' },
-  { rival: 'vs Academia Nacional',        torneo: 'Torneo DBS · Sub-13',      fecha: '2026-04-19', hora: '10:00' },
+  { rival: 'vs Academia Los Millonarios', torneo: 'Liga de Bogotá · Sub-17', fecha: '2026-04-05', hora: '15:00' },
+  { rival: 'vs Escuela Santa Fe', torneo: 'Torneo Maracaná · Sub-15', fecha: '2026-04-12', hora: '18:00' },
+  { rival: 'vs Academia Nacional', torneo: 'Torneo DBS · Sub-13', fecha: '2026-04-19', hora: '10:00' },
 ]
 
 const NOTICIAS = [
   {
-    titulo:  'Escuela Patriota Sport Bacatá campeona del Torneo DBS Sub-15',
+    titulo: 'Escuela Patriota Sport Bacatá campeona del Torneo DBS Sub-15',
     resumen: 'El equipo Sub-15 logró el título del Torneo DBS con una victoria 2-0 en la final ante Academia Chicó...',
-    fecha:   '2026-03-20',
+    fecha: '2026-03-20',
   },
   {
-    titulo:  'Victoria importante ante Escuela Equidad Sub-17',
+    titulo: 'Victoria importante ante Escuela Equidad Sub-17',
     resumen: 'El equipo Sub-17 logró una victoria 3-1 ante Escuela Equidad, consolidándose en el segundo lugar de la Liga de Bogotá...',
-    fecha:   '2026-03-22',
+    fecha: '2026-03-22',
   },
   {
-    titulo:  'Nuevas instalaciones de entrenamiento en Parque Timiza',
+    titulo: 'Nuevas instalaciones de entrenamiento en Parque Timiza',
     resumen: 'Se inauguraron mejoras en la cancha sintética Bacatá, incluyendo nuevo alumbrado para entrenamientos nocturnos...',
-    fecha:   '2026-03-15',
+    fecha: '2026-03-15',
   },
 ]
 
 const CATEGORIAS = [
-  { nombre: 'Sub-7',  año: '2018' },
-  { nombre: 'Sub-9',  año: '2016' },
+  { nombre: 'Sub-7', año: '2018' },
+  { nombre: 'Sub-9', año: '2016' },
   { nombre: 'Sub-11', año: '2014' },
   { nombre: 'Sub-13', año: '2012' },
   { nombre: 'Sub-15', año: '2010' },
@@ -44,7 +46,7 @@ const CATEGORIAS = [
 export default function HomePage() {
   return (
     <div className="bg-white text-gray-900">
-
+      <Header />
       {/* ── HERO ─────────────────────────────────── */}
       <section
         className="relative flex min-h-[420px] items-center justify-center bg-cover bg-center"
@@ -154,7 +156,7 @@ export default function HomePage() {
         </div>
       </section>
 
-
+      <Footer />
     </div>
   )
 }
