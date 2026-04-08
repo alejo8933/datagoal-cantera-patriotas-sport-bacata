@@ -1,97 +1,99 @@
 import { createClient } from '@/lib/supabase/server'
-import { ShieldCheck, ShieldAlert, UserCog } from 'lucide-react'
+import { ShieldCheck, ShieldAlert, Users, UserCheck, UserX, Shield, Activity, GraduationCap } from 'lucide-react'
 import ModalCrearUsuario from '@/components/features/usuarios/ModalCrearUsuario'
-import ModalEliminar from '@/components/features/ui/ModalEliminar'
-import ModalEditarUsuario from '@/components/features/usuarios/ModalEditarUsuario'
+import TablaUsuarios from '@/components/features/usuarios/TablaUsuarios'
 
 export default async function AdminUsuariosPage() {
   const supabase = await createClient()
 
-  // Consultar solo usuarios activos
+  // Consultar TODOS los usuarios para las estadísticas y búsqueda
   const { data: perfiles, error } = await supabase
     .from('perfiles')
     .select('*')
-    .eq('activo', true)
     .order('rol')
 
+  // Cálculos para KPI Cards
+  const total = perfiles?.length || 0
+  const activos = perfiles?.filter(p => p.activo).length || 0
+  const inactivos = total - activos
+  const admins = perfiles?.filter(p => p.rol === 'admin').length || 0
+
+  const stats = [
+    { name: 'Usuarios Activos', icon: UserCheck, value: activos, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { name: 'Usuarios Inactivos', icon: UserX, value: inactivos, color: 'text-gray-400', bg: 'bg-gray-50' },
+    { name: 'Administradores', icon: Shield, value: admins, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { name: 'Total Usuarios', icon: Users, value: total, color: 'text-red-600', bg: 'bg-red-50' },
+  ]
+
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      
+      {/* HEADER SECTION */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-            <ShieldCheck className="text-red-600" />
-            Usuarios y Roles
+          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+            Gestión de Usuarios
           </h1>
-          <p className="text-gray-500 mt-1">Gestiona los accesos y niveles de seguridad del sistema.</p>
+          <p className="text-gray-500 font-medium mt-1">Administra usuarios, roles y permisos de acceso al sistema DataGoal.</p>
         </div>
         <ModalCrearUsuario />
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {error ? (
-          <div className="p-6 text-center text-red-500 flex flex-col items-center gap-2">
-            <ShieldAlert size={32} />
-            <p>Error al cargar usuarios: {error.message}</p>
+      {/* KPI CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat) => (
+          <div key={stat.name} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-4 group">
+            <div className={`h-12 w-12 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
+              <stat.icon size={24} />
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">{stat.name}</p>
+              <h2 className="text-2xl font-black text-gray-900 leading-none">{stat.value}</h2>
+            </div>
           </div>
-        ) : !perfiles?.length ? (
-          <div className="p-12 text-center text-gray-500">
-            <p>No hay usuarios registrados aún.</p>
+        ))}
+      </div>
+
+      {/* MAIN LIST SECTION */}
+      <div className="space-y-4">
+        <div className="flex flex-col gap-1 pr-4">
+           <h2 className="text-xl font-bold text-gray-900">Lista de Usuarios</h2>
+           <p className="text-sm text-gray-400 font-medium tracking-tight">Gestiona los usuarios y sus roles en el sistema</p>
+        </div>
+
+        {error ? (
+          <div className="p-12 text-center text-red-500 bg-white rounded-3xl border border-red-50 shadow-sm flex flex-col items-center gap-4">
+            <ShieldAlert size={48} className="animate-bounce" />
+            <p className="max-w-xs font-semibold">Ha ocurrido un error al conectar con la base de datos de perfiles.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse whitespace-nowrap">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 text-xs uppercase tracking-wider">
-                  <th className="px-6 py-4 font-medium">Nombre y Apellido</th>
-                  <th className="px-6 py-4 font-medium text-center">Nivel de Acceso (Rol)</th>
-                  <th className="px-6 py-4 font-medium text-center">Estado de Cuenta</th>
-                  <th className="px-6 py-4 font-medium text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {perfiles.map((p) => (
-                  <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-700 font-bold text-xs uppercase">
-                        {p.nombre?.[0] || 'U'}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">{p.nombre || 'Sin Nombre'} {p.apellido || ''}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${
-                        p.rol === 'admin' ? 'bg-red-600 text-white shadow-sm' : 
-                        p.rol === 'entrenador' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 
-                        'bg-gray-100 text-gray-600 border border-gray-200'
-                      }`}>
-                        {p.rol}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="px-2 py-1 bg-green-50 text-green-700 text-xs rounded-full border border-green-200 flex items-center justify-center gap-1 w-20 mx-auto">
-                        <div className="w-1 h-1 rounded-full bg-green-500 animate-pulse"></div>
-                        Vigente
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
-                      <ModalEditarUsuario usuario={p} />
-                      <ModalEliminar 
-                        tabla="perfiles" 
-                        idRegistro={p.id} 
-                        pathRevalidacion="/dashboard/admin/usuarios"
-                        modo="inactivo"
-                        etiqueta="Inhabilitar"
-                        esIcono={true}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <TablaUsuarios usuarios={perfiles || []} />
         )}
       </div>
+
+      {/* ROLES DESCRIPTION SECTION */}
+      <div className="space-y-6 pt-10 border-t border-gray-100">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold text-gray-900">Roles del Sistema</h2>
+          <p className="text-sm text-gray-400 font-medium tracking-tight">Descripción de los roles y permisos disponibles</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:border-red-200 transition-colors">
+             <span className="inline-block px-3 py-1 bg-red-50 text-red-600 rounded-lg text-[10px] font-bold uppercase tracking-widest mb-3">Administrador</span>
+             <p className="text-sm text-gray-500 font-medium leading-relaxed">Acceso completo a todos los módulos: Usuarios, Finazas, Equipos y Entrenamientos.</p>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:border-blue-200 transition-colors">
+             <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-bold uppercase tracking-widest mb-3">Entrenador</span>
+             <p className="text-sm text-gray-500 font-medium leading-relaxed">Gestión operativa de equipos, asistencia a entrenamientos y registro de desempeño técnico.</p>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:border-emerald-200 transition-colors">
+             <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-bold uppercase tracking-widest mb-3">Jugador</span>
+             <p className="text-sm text-gray-500 font-medium leading-relaxed">Acceso a estadísticas individuales, calendario de partidos y historial de pagos personales.</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   )
 }

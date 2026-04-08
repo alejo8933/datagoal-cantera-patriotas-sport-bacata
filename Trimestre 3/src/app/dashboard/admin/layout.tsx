@@ -12,10 +12,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     redirect('/login')
   }
 
-  // Verificar el rol del usuario en la tabla perfiles
+  // Verificar el rol y datos del usuario en la tabla perfiles
   const { data: perfil } = await supabase
     .from('perfiles')
-    .select('rol')
+    .select('rol, nombre, apellido')
     .eq('id', user.id)
     .single()
 
@@ -37,7 +37,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <div className="flex-1 ml-64 flex flex-col min-h-screen">
         
         {/* Header superior de Navegación y Perfil */}
-        <AdminHeader email={user.email} />
+        <AdminHeader 
+          email={user.email} 
+          nombre={perfil.nombre || 'Administrador'} 
+          apellido={perfil.apellido || ''} 
+          rol={perfil.rol} 
+        />
 
         {/* Contenido principal con padding interno */}
         <main className="flex-1 p-8">

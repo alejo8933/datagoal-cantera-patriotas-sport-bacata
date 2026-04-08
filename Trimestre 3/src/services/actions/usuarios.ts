@@ -7,11 +7,19 @@ export async function crearUsuario(formData: FormData) {
   const email = formData.get('email')?.toString().trim()
   const password = formData.get('password')?.toString().trim()
   const rol = formData.get('rol')?.toString().trim()
+  
+  // Nuevos campos expandidos
+  const nombre = formData.get('nombre')?.toString().trim()
+  const apellido = formData.get('apellido')?.toString().trim()
+  const telefono = formData.get('telefono')?.toString().trim()
+  const fecha_nacimiento = formData.get('fecha_nacimiento')?.toString()
+  const posicion = formData.get('posicion')?.toString()
+  const categoria = formData.get('categoria')?.toString()
 
-  if (!email || !password || !rol) {
+  if (!email || !password || !rol || !nombre || !apellido) {
     return {
       success: false,
-      message: 'Email, Contraseña y Rol son requeridos.',
+      message: 'Nombre, Apellido, Email, Contraseña y Rol son obligatorios.',
     }
   }
 
@@ -22,64 +30,65 @@ export async function crearUsuario(formData: FormData) {
     }
   }
 
-  // Para crear usuarios sin desloguear al administrador actual, requerimos el Service Role Key
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseServiceKey) {
-    console.error('Falta SUPABASE_SERVICE_ROLE_KEY en el entorno.')
     return {
       success: false,
-      message: 'Falta configurar TU KEY SECRETA DE ADMINISTRADOR en Supabase (.env: SUPABASE_SERVICE_ROLE_KEY) para habilitar esta fusión.',
+      message: 'Falta configuración del servidor (Service Role Key).',
     }
   }
 
-  // Cliente de Super Administrador (Ignora RLS)
   const supabaseAdmin = createSupabaseClient(supabaseUrl, supabaseServiceKey)
 
   // 1. Crear el usuario en Auth (Identidad)
   const { data: newUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
     email,
     password,
-    email_confirm: true // Confirmar automáticamente para no obligarlo a ir a su correo
+    email_confirm: true,
+    user_metadata: {
+      rol,
+      nombre,
+      apellido
+    }
   })
 
   if (authError || !newUser.user) {
-    console.error('Error Auth:', authError)
     return {
       success: false,
-      message: 'Error creando la identidad del usuario.',
-      error: authError?.message || 'Fallo desconocido.',
+      message: 'Error creando la identidad: ' + (authError?.message || 'Fallo desconocido'),
     }
   }
 
-  // 2. Asociar el rol en la tabla `perfiles`
-  // Supabase Triggers usualmente crean el perfil, pero actualizaríamos el rol.
-  // Pero si el Trigger no existe, lo insertamos nosotros (El SuperAdmin pasa RLS preventivamente).
-  
+  // 2. Crear/Actualizar el perfil con TODOS los datos
   const { error: profileError } = await supabaseAdmin
     .from('perfiles')
     .upsert([
       {
         id: newUser.user.id,
         rol,
+        email,
+        nombre,
+        apellido,
+        telefono,
+        fecha_nacimiento,
+        posicion: (rol === 'jugador') ? posicion : null,
+        categoria: (rol !== 'admin') ? categoria : null,
         estado: 'activo',
-        // Podemos guardar el email como nombre base mientras ellos lo actualizan
-        nombre: email.split('@')[0].toUpperCase(), 
-        apellido: 'N/A'
+        actualizado_en: new Date().toISOString()
       }
     ])
 
   if (profileError) {
-    // Nota: Si el Trigger insertó, entonces Upsert actualizará.
-    console.error('Error Perfil:', profileError)
+    console.error('Error al guardar perfil:', profileError)
   }
 
   revalidatePath('/dashboard/admin/usuarios')
 
   return {
     success: true,
-    message: `Cuenta de ${rol} generada y asociada con éxito.`,
+    message: `Perfil de ${rol} creado exitosamente.`,
   }
 }
 
