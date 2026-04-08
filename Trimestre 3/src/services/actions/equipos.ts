@@ -60,6 +60,15 @@ export async function editarEquipo(formData: FormData) {
   const id = formData.get('id')?.toString()
   const equipo = formData.get('equipo')?.toString().trim()
   const categoria = formData.get('categoria')?.toString().trim()
+  const imagen_url = formData.get('imagen_url')?.toString().trim()
+  const tecnico = formData.get('tecnico')?.toString().trim()
+  const sede = formData.get('sede')?.toString().trim()
+  const fundacionRaw = formData.get('fundacion')?.toString()
+  const fundacion = fundacionRaw && !isNaN(parseInt(fundacionRaw)) ? parseInt(fundacionRaw) : 2013
+  const logros_raw = formData.get('logros_raw')?.toString().trim()
+
+  // Procesar logros (String a Array)
+  const logros = logros_raw ? logros_raw.split('\n').filter(l => l.trim() !== '') : []
 
   if (!id || !equipo || !categoria) {
     return {
@@ -70,15 +79,22 @@ export async function editarEquipo(formData: FormData) {
 
   const { error } = await supabase
     .from('rendimiento_equipos')
-    .update({ equipo, categoria })
+    .update({ 
+      equipo, 
+      categoria,
+      imagen_url: imagen_url || null,
+      tecnico: tecnico || null,
+      sede: sede || null,
+      fundacion: fundacion,
+      logros: logros
+    })
     .eq('id', id)
 
   if (error) {
     console.error('Error editando equipo:', error)
     return {
       success: false,
-      message: 'Error al actualizar el equipo.',
-      error: error.message,
+      message: 'Error al actualizar el equipo técnico: ' + error.message,
     }
   }
 
@@ -86,6 +102,6 @@ export async function editarEquipo(formData: FormData) {
 
   return {
     success: true,
-    message: 'Equipo actualizado correctamente.',
+    message: 'Equipo actualizado correctamente con perfil premium.',
   }
 }
