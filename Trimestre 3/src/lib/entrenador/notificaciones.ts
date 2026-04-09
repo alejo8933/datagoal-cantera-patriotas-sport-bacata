@@ -90,4 +90,51 @@ export async function notificarActividadAdmin({
   }));
 
   await supabase.from("notificaciones").insert(notificationsToInsert);
-}
+}
+
+export async function enviarNotificacionMasiva({
+  targetRole,
+  prioridad,
+  tipo = "comunicado",
+  titulo,
+  descripcion,
+}: {
+  targetRole: 'all' | 'entrenador' | 'jugador' | 'admin';
+  prioridad: string;
+  tipo?: string;
+  titulo: string;
+  descripcion: string;
+}) {
+  const supabase = await createClient();
+  
+  // 1. Obtener los perfiles objetivo
+  let query = supabase.from('perfiles').select('id');
+  
+  if (targetRole !== 'all') {
+    query = query.eq('rol', targetRole);
+  }
+  
+  const { data: users, error } = await query;
+  
+  if (error || !users || users.length === 0) {
+    return { success: false, error: 'No se encontraron destinatarios' };
+  }
+
+  // 2. Preparar el lote
+  const notifications = users.map(user => ({
+    user_id: user.id,
+    titulo,
+    descripcion,
+    tipo,
+    prioridad,
+  }));
+
+  // 3. Insertar
+  const { error: insertError } = await supabase.from('notificaciones').insert(notifications);
+  
+  if (insertError) {
+    return { success: false, error: insertError.message };
+  }
+
+  return { success: true, count: users.length };
+}

@@ -3,6 +3,7 @@ import { Users, ShieldAlert, Image as ImageIcon, FileDown } from 'lucide-react'
 import ModalCrearJugador from '@/components/features/jugadores/ModalCrearJugador'
 import ModalEliminar from '@/components/features/ui/ModalEliminar'
 import ModalEditarJugador from '@/components/features/jugadores/ModalEditarJugador'
+import ModalTransferirJugador from '@/components/features/jugadores/ModalTransferirJugador'
 import ExportarReporte from '@/components/admin/ExportarReporte'
 
 export default async function AdminJugadoresPage() {
@@ -121,6 +122,7 @@ export default async function AdminJugadoresPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover/row:opacity-100 transition-opacity">
+                        <ModalTransferirJugador jugador={jugador} />
                         <ModalEditarJugador jugador={jugador} />
                         <ModalEliminar 
                           tabla="jugadores" 
