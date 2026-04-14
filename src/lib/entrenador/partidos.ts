@@ -29,7 +29,11 @@ export async function getEventosPartido(partidoId: string) {
     `)
     .eq("partido_id", partidoId)
     .order("minuto", { ascending: true });
-  return data ?? [];
+  
+  return (data || []).map(ev => ({
+    ...ev,
+    jugadores: Array.isArray(ev.jugadores) ? ev.jugadores[0] : ev.jugadores
+  })) as any[];
 }
 
 export async function getJugadoresActivos() {

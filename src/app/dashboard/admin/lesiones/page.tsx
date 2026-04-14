@@ -1,5 +1,5 @@
 import { getLesiones, getJugadoresParaLesiones } from "@/lib/entrenador/lesiones";
-import LesionesPanel from "@/components/entrenador/LesionesPanel";
+import LesionesPanel from "@/components/entrenador/LesionesPanel"; // Arreglo de tipos build Vercel
 
 export default async function AdminLesionesPage() {
   const [lesiones, jugadores] = await Promise.all([

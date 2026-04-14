@@ -10,17 +10,18 @@ interface Equipo {
   equipo: string
   categoria: string
   imagen_url?: string
-  fundacion?: number
-  sede?: string
-  tecnico?: string
-  logros?: any
-  puntos?: number
-  partidos?: number
-  activo?: boolean
-  genero?: string
-  edades?: string
-  cupos?: number
-  horario?: string
+  fundacion: number | null
+  sede: string | null
+  tecnico: string | null
+  tecnico_id: string | null
+  logros: any | null
+  puntos: number | null
+  partidos: number | null
+  activo: boolean | null
+  genero: string | null
+  edades: string | null
+  cupos: number | null
+  horario: string | null
 }
 
 export default function CardEquipoPremium({ equipo }: { equipo: Equipo }) {

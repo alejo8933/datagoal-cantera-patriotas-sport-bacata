@@ -249,7 +249,7 @@ export default function ModalBroadcast() {
               {/* Security Hint */}
               <div className="p-6 bg-red-600 flex items-center justify-center gap-2">
                  <AlertCircle size={14} className="text-white/60" />
-                 <p className="text-[10px] font-black text-white/80 uppercase tracking-widest">Este mensaje será enviado a {targetRole === 'all' ? 'TODOS' : targetRole.toUpperCase()}</p>
+                 <p className="text-[10px] font-black text-white/80 uppercase tracking-widest">Este mensaje será enviado a {form.targetRole === 'all' ? 'TODOS' : form.targetRole.toUpperCase()}</p>
               </div>
 
             </motion.div>

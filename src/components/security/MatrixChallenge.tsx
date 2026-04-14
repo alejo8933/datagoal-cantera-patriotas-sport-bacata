@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ShieldAlert, CheckCircle2, XCircle, Loader2 } from 'lucide-react'
 import { MatrixData, validarRetoMatriz } from '@/services/actions/matrix'
 

@@ -20,7 +20,7 @@ type Lesion = {
   fecha_lesion: string | null;
   fecha_retorno: string | null;
   jugador_id: string;
-  jugadores: Jugador;
+  jugadores: Jugador | Jugador[]; // Soporte para ambos casos
 };
 
 interface Props {
@@ -155,7 +155,7 @@ export default function LesionesPanel({ lesiones, jugadores }: Props) {
           </div>
         ) : (
           getFilteredLesiones().map(l => {
-            const j = l.jugadores;
+            const j = Array.isArray(l.jugadores) ? l.jugadores[0] : l.jugadores;
             const comp = decodeCompendio(l.descripcion);
             const grav = comp.gravedad || "Leve";
             const tipoZonaDesc = comp.tipo && comp.zona ? `${comp.tipo} en ${comp.zona}` : l.descripcion;

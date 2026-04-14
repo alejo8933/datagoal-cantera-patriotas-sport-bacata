@@ -48,9 +48,10 @@ export default async function EventosPartidoPage({
       </div>
 
       <EventosPartidoPanel
-        partido={partido}
-        eventos={eventos}
-        jugadores={jugadores}
+        partidos={[partido] as any}
+        partidoId={params.id}
+        eventos={eventos as any}
+        jugadores={jugadores as any}
       />
     </div>
   );

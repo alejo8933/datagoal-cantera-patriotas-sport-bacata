@@ -36,10 +36,10 @@ export default async function PartidosEntrenadorPage({
   return (
     <div className="space-y-6">
       <EventosPartidoPanel 
-        partidos={partidos}
+        partidos={partidos as any}
         partidoId={partidoId}
-        eventos={eventos}
-        jugadores={jugadores}
+        eventos={eventos as any}
+        jugadores={jugadores as any}
       />
     </div>
   )
