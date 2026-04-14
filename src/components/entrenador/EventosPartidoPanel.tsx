@@ -25,7 +25,7 @@ type Evento = {
   equipo: string;
   descripcion: string;
   created_at: string;
-  jugadores: { id: string; nombre: string; apellido: string; numero_camiseta: number } | null;
+  jugadores: any; // Blindado para build Vercel
 };
 
 type Jugador = {

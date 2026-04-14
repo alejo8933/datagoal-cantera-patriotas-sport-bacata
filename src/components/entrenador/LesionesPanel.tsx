@@ -20,7 +20,7 @@ type Lesion = {
   fecha_lesion: string | null;
   fecha_retorno: string | null;
   jugador_id: string;
-  jugadores: Jugador | Jugador[]; // Soporte para ambos casos
+  jugadores: any; // Blindado para build Vercel
 };
 
 interface Props {
